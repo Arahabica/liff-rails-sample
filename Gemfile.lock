@@ -79,6 +79,12 @@ GEM
     childprocess (3.0.0)
     concurrent-ruby (1.1.9)
     crass (1.0.6)
+    database_cleaner (2.0.1)
+      database_cleaner-active_record (~> 2.0.0)
+    database_cleaner-active_record (2.0.1)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -90,6 +96,13 @@ GEM
       devise (> 3.5.2, < 5)
       rails (>= 4.2.0, < 6.2)
     erubi (1.10.0)
+    factory_bot (6.2.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.19.0)
+      i18n (>= 1.6, < 2)
     ffi (1.15.4)
     globalid (0.5.2)
       activesupport (>= 5.0)
@@ -110,6 +123,9 @@ GEM
     mini_mime (1.1.1)
     mini_portile2 (2.6.1)
     minitest (5.14.4)
+    minitest-rails (6.1.0)
+      minitest (~> 5.10)
+      railties (~> 6.1.0)
     msgpack (1.4.2)
     nio4r (2.5.8)
     nokogiri (1.12.4)
@@ -145,6 +161,10 @@ GEM
       bundler (>= 1.15.0)
       railties (= 6.1.4.1)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.5)
+      actionpack (>= 5.0.1.rc1)
+      actionview (>= 5.0.1.rc1)
+      activesupport (>= 5.0.1.rc1)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -225,15 +245,21 @@ DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
   capybara (>= 3.26)
+  database_cleaner
   devise
   devise_token_auth
+  factory_bot_rails
+  faker
   jbuilder (~> 2.7)
   listen (~> 3.3)
+  minitest
+  minitest-rails
   pg (~> 1.1)
   puma (~> 5.0)
   rack-cors
   rack-mini-profiler (~> 2.0)
   rails (~> 6.1.4, >= 6.1.4.1)
+  rails-controller-testing
   sass-rails (>= 6)
   selenium-webdriver
   spring
