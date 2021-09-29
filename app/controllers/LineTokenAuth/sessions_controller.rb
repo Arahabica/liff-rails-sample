@@ -32,10 +32,7 @@ module LineTokenAuth
           render_create_error_not_confirmed
         end
       else
-        user_params = authenticate(field, resource_params[:access_token])
-        if !user_params
-          render_create_error_bad_credentials
-        end
+        render_create_error_bad_credentials
       end
     end
     def valid_params?(key, val)
