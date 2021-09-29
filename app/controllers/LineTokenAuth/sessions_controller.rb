@@ -1,5 +1,6 @@
 module LineTokenAuth
   class SessionsController < DeviseTokenAuth::SessionsController
+    include LineTokenAuth::Concerns::LineAuthenticator
 
     def create
       # Check
@@ -11,14 +12,9 @@ module LineTokenAuth
       end
       
       if @resource && valid_params?(field, q_value) && (!@resource.respond_to?(:active_for_authentication?) || @resource.active_for_authentication?)
-        #valid_password = @resource.valid_password?(resource_params[:password])
-        #if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_password }) || !valid_password
-        #  return render_create_error_bad_credentials
-        #end
-        user_params = authenticate(field, resource_params[:access_token])
-        valid_token = !!user_params
-        if (@resource.respond_to?(:valid_for_authentication?) && !@resource.valid_for_authentication? { valid_token }) || !valid_token
-          return render_create_error_bad_credentials
+        auth_result = authenticate(@resource[field], resource_params[:access_token])
+        if auth_result[:error]
+          return render_error(auth_result[:error][:code], auth_result[:error][:message])
         end
         
         @token = @resource.create_token
@@ -47,18 +43,6 @@ module LineTokenAuth
     end
     def provider
       'line'
-    end
-    private
-    def authenticate(uid, access_token)
-      if access_token == 'token001'
-        {
-          uid: uid,
-          name: 'myname',
-          image: 'image_url'
-        }
-      else
-        nil
-      end
     end
   end
 end

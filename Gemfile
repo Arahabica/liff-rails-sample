@@ -37,6 +37,7 @@ group :development, :test do
   gem 'minitest'
   gem 'minitest-rails'
   gem 'rails-controller-testing'
+  gem 'mocha'
 end
 
 group :development do

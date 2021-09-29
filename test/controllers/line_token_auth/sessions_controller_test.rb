@@ -1,4 +1,5 @@
 require "test_helper"
+require 'mocha/minitest'
 
 class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
   describe LineTokenAuth::SessionsController do
@@ -9,6 +10,7 @@ class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'success' do
         before do
+          stubs_line_ok('channel_001', @existing_user.uid, 'name001')
           @user_session_params = {
             uid: @existing_user.uid,
             access_token: 'token001'
@@ -87,6 +89,7 @@ class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
       describe 'get sign_in is not supported' do
         before do
+          stubs_line_ok('channel_001', @existing_user.uid, 'name001')
           get :new,
               params: { uid: @existing_user.uid,
                         access_token: 'token001' }
@@ -103,6 +106,7 @@ class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
       end
       describe 'header sign_in is supported' do
         before do
+          stubs_line_ok('channel_001', @existing_user.uid, 'name001')
           request.headers.merge!(
             'uid' => @existing_user.uid,
             'access_token' => 'token001'
@@ -184,6 +188,7 @@ class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
 
       describe 'failure' do
         before do
+          stubs_line_verify_error('channel_001')
           post :create,
                params: { uid: @existing_user.uid,
                          access_token: 'bogus' }
@@ -199,9 +204,37 @@ class LineTokenAuth::SessionsControllerTest < ActionController::TestCase
         test 'response should contain errors' do
           assert @data['errors']
           assert_equal @data['errors'],
-                       [I18n.t('devise_token_auth.sessions.bad_credentials')]
+                       ['invalid token']
         end
       end
     end
+  end
+  def stubs_line_ok(line_channel_id, uid, display_name)
+    LineTokenAuth::SessionsController.any_instance.stubs(:line_channel_id).returns(line_channel_id)
+    LineTokenAuth::SessionsController.any_instance.stubs(:verify_line_token).returns({
+      code: 200,
+      body: {
+        client_id: line_channel_id,
+        expires_in: 100
+      }
+    })
+    LineTokenAuth::SessionsController.any_instance.stubs(:get_profile_by_line_token).returns({
+      code: 200,
+      body: {
+        userId: uid,
+        displayName: display_name,
+        pictureUrl: 'https://sample.com/sample.png'
+      }
+    })
+  end
+  def stubs_line_verify_error(line_channel_id)
+    LineTokenAuth::SessionsController.any_instance.stubs(:line_channel_id).returns(line_channel_id)
+    LineTokenAuth::SessionsController.any_instance.stubs(:verify_line_token).returns({
+      code: 401,
+      body: {
+        error: "invalid_request",
+        error_description: "invalid token"
+      }
+    })
   end
 end
