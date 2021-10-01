@@ -18,6 +18,8 @@ module LineTokenAuth
       if auth_result[:error]
         return render_error(auth_result[:error][:code], auth_result[:error][:message])
       end
+      @resource.name = auth_result[:profile][:name]
+      @resource.image = auth_result[:profile][:image]
       if @resource.save
         yield @resource if block_given?
 
