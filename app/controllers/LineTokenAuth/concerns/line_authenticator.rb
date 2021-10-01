@@ -9,25 +9,25 @@ module LineTokenAuth::Concerns::LineAuthenticator
   def authenticate(uid, access_token)
     verify_result = verify_line_token(access_token)
     if verify_result[:code] != 200
-      return fail_authenticate(verify_result[:code], verify_result[:body][:error_description])
+      return fail_authenticate(verify_result[:code], verify_result[:body]["error_description"])
     end
-    if verify_result[:body][:client_id] != line_channel_id
+    if verify_result[:body]["client_id"] != line_channel_id
       return fail_authenticate(401, 'LINE Channel ID is not matched.')
     end
-    if verify_result[:body][:expires_in] <= 0
+    if verify_result[:body]["expires_in"] <= 0
       return fail_authenticate(401, 'LINE access token is expired')
     end
     profile_result = get_profile_by_line_token(access_token)
     if profile_result[:code] != 200
       return fail_authenticate(profile_result[:code], profile_result[:body][:error_description])
     end
-    if profile_result[:body][:userId] != uid
+    if profile_result[:body]["userId"] != uid
       return fail_authenticate(401, 'uid is not matched.')
     end
     success_authenticate({
       uid: uid,
-      name: profile_result[:body][:displayName],
-      image: profile_result[:body][:pictureUrl]
+      name: profile_result[:body]["displayName"],
+      image: profile_result[:body]["pictureUrl"]
     })
   end
   private
